@@ -1,0 +1,10 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- Outer ripple -->
+    <circle cx="100" cy="100" r="85" fill="none" stroke="#1d9bf0" stroke-width="3" opacity="0.3"/>
+    <!-- Middle ripple -->
+    <circle cx="100" cy="100" r="65" fill="none" stroke="#1d9bf0" stroke-width="3" opacity="0.5"/>
+    <!-- Drop shape (teardrop) -->
+    <path d="M 100 40 C 85 55, 75 75, 75 90 C 75 115, 85.7 130, 100 130 C 114.3 130, 125 115, 125 90 C 125 75, 115 55, 100 40 Z" fill="#1d9bf0"/>
+    <!-- Center dot (the deet) -->
+    <circle cx="100" cy="85" r="12" fill="white"/>
+</svg>

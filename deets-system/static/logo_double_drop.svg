@@ -1,0 +1,11 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- Left drop -->
+    <path d="M 70 45 C 60 57, 55 70, 55 80 C 55 100, 60 110, 70 110 C 80 110, 85 100, 85 80 C 85 70, 80 57, 70 45 Z" fill="#1d9bf0"/>
+    <!-- Right drop (slightly offset) -->
+    <path d="M 130 55 C 120 67, 115 80, 115 90 C 115 110, 120 120, 130 120 C 140 120, 145 110, 145 90 C 145 80, 140 67, 130 55 Z" fill="#1d9bf0" opacity="0.7"/>
+    <!-- Connecting curve (handoff) -->
+    <path d="M 85 80 Q 100 85, 115 90" fill="none" stroke="#1d9bf0" stroke-width="2.5"/>
+    <!-- Small dots (deets) in each -->
+    <circle cx="70" cy="80" r="5" fill="white"/>
+    <circle cx="130" cy="90" r="5" fill="white"/>
+</svg>

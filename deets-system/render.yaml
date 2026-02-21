@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: deets
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app.py"
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: true
+      - key: ANTHROPIC_API_KEY
+        sync: false

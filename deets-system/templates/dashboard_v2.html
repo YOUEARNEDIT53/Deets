@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Deets Feed</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7f9fa;
+            color: #1a1a1a;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid #e1e8ed;
+            padding: 16px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+        
+        /* Tutorial Box */
+        .tutorial {
+            background: #e7f5ff;
+            border: 2px solid #1d9bf0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .tutorial h2 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #1d9bf0;
+        }
+        
+        .tutorial-step {
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .tutorial-step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .tutorial-step strong {
+            color: #1a1a1a;
+        }
+        
+        /* Compose Section */
+        .compose {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .compose-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+        
+        .compose-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            margin-bottom: 12px;
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .compose-input:focus {
+            outline: none;
+            border-color: #1d9bf0;
+            box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.1);
+        }
+        
+        .compose-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .topic-select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        
+        .topic-select:focus {
+            outline: none;
+            border-color: #1d9bf0;
+            box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.1);
+        }
+        
+        .btn {
+            background: #1d9bf0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background: #1a91da;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #1d9bf0;
+            border: 1px solid #1d9bf0;
+        }
+        
+        /* Deet Card */
+        .deet {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
+        }
+        
+        .deet:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .deet-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .deet-state {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .deet-state.hot { background: #ffe0e0; color: #e74c3c; }
+        .deet-state.confirmed { background: #e0ffe0; color: #17bf63; }
+        .deet-state.spreading { background: #e0f7ff; color: #1d9bf0; }
+        
+        .deet-claim {
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+        
+        .deet-score {
+            background: #f7f9fa;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .score-number {
+            font-weight: 700;
+            min-width: 40px;
+        }
+        
+        .score-high { color: #17bf63; }
+        .score-mid { color: #1d9bf0; }
+        .score-low { color: #e74c3c; }
+        
+        .deet-stats {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+        
+        .deet-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .action-btn:hover {
+            background: #f7f9fa;
+            border-color: #1d9bf0;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .modal-field {
+            margin-bottom: 16px;
+        }
+        
+        .modal-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #666;
+        }
+        
+        .modal-field input,
+        .modal-field select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .modal-field input:focus,
+        .modal-field select:focus {
+            outline: none;
+            border-color: #1d9bf0;
+            box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.1);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* Empty State */
+        .empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .empty h3 {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .empty p {
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px; display: inline-block; margin-right: 8px; vertical-align: middle;">
+            <circle cx="100" cy="100" r="85" fill="none" stroke="#1d9bf0" stroke-width="3" opacity="0.3"/>
+            <circle cx="100" cy="100" r="65" fill="none" stroke="#1d9bf0" stroke-width="3" opacity="0.5"/>
+            <path d="M 100 40 C 85 55, 75 75, 75 90 C 75 115, 85.7 130, 100 130 C 114.3 130, 125 115, 125 90 C 125 75, 115 55, 100 40 Z" fill="#1d9bf0"/>
+            <circle cx="100" cy="85" r="12" fill="white"/>
+        </svg>
+        Your Deets Feed
+    </div>
+    
+    <div class="container">
+        <!-- Tutorial -->
+        <div class="tutorial">
+            <h2>✨ How It Works</h2>
+            <div class="tutorial-step">
+                1️⃣ <strong>Type a claim</strong> below (one fact, max 280 chars)
+            </div>
+            <div class="tutorial-step">
+                2️⃣ <strong>Pick a topic</strong> (Sports, Tech, etc.)
+            </div>
+            <div class="tutorial-step">
+                3️⃣ <strong>Click "Drop It"</strong> to share with your network
+            </div>
+            <div class="tutorial-step">
+                4️⃣ <strong>Others validate or challenge</strong> it (score changes in real-time)
+            </div>
+            <div class="tutorial-step">
+                5️⃣ <strong>Pass to friends</strong> — your credibility matters!
+            </div>
+        </div>
+        
+        <!-- Compose Box -->
+        <div class="compose">
+            <div class="compose-label">💬 Drop a Deet</div>
+            <textarea class="compose-input" id="claim" placeholder="Type one true fact (e.g., 'Bitcoin hit $50k today')"></textarea>
+            <div class="compose-controls">
+                <select id="topic" class="topic-select">
+                    <option value="">Pick a topic...</option>
+                    <option value="Celebrity/Entertainment">🎬 Celebrity & Entertainment</option>
+                    <option value="Sports">⚽ Sports</option>
+                    <option value="Tech Breakthroughs">💻 Tech Breakthroughs</option>
+                    <option value="True Crime">🔍 True Crime</option>
+                    <option value="Crypto/Finance">💰 Crypto & Finance</option>
+                </select>
+                <button class="btn" onclick="dropDeet()">Drop It</button>
+                <button class="btn btn-secondary" onclick="showSeedModal()">🌱 Agent</button>
+            </div>
+        </div>
+        
+        <!-- Feed -->
+        <div id="feed"></div>
+    </div>
+    
+    <!-- Modals -->
+    <div class="modal" id="seedModal">
+        <div class="modal-content">
+            <div class="modal-title">🌱 Agent Seeds a Deet</div>
+            <div style="font-size: 13px; color: #666; margin-bottom: 16px;">
+                The agent will search the web and create a verified deet from multiple sources.
+            </div>
+            <div class="modal-field">
+                <label>Pick a topic</label>
+                <select id="seedTopic">
+                    <option value="">Select topic...</option>
+                    <option value="Celebrity/Entertainment">🎬 Celebrity & Entertainment</option>
+                    <option value="Sports">⚽ Sports</option>
+                    <option value="Tech Breakthroughs">💻 Tech Breakthroughs</option>
+                    <option value="True Crime">🔍 True Crime</option>
+                    <option value="Crypto/Finance">💰 Crypto & Finance</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closeSeedModal()">Cancel</button>
+                <button class="btn" style="flex: 1;" onclick="seedDeet()">Seed It</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="passModal">
+        <div class="modal-content">
+            <div class="modal-title">➡️ Pass This Deet</div>
+            <div style="font-size: 13px; color: #666; margin-bottom: 16px;">
+                Send to friends (they'll see the trail and can validate/challenge it too)
+            </div>
+            <div id="passOptions" style="margin-bottom: 16px;"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" style="flex: 1;" onclick="closePassModal()">Cancel</button>
+                <button class="btn" style="flex: 1;" onclick="submitPass()">Send</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const userId = "{{ user.id }}";
+        let currentPassDeetId = null;
+        
+        loadFeed();
+        
+        function dropDeet() {
+            const claim = document.getElementById('claim').value.trim();
+            const topic = document.getElementById('topic').value;
+            
+            if (!claim) {
+                alert('Type a claim');
+                return;
+            }
+            if (!topic) {
+                alert('Pick a topic');
+                return;
+            }
+            
+            fetch('/api/deet/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, claim, topic_id: topic })
+            }).then(r => r.json()).then(result => {
+                if (result.success) {
+                    document.getElementById('claim').value = '';
+                    document.getElementById('topic').value = '';
+                    loadFeed();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            });
+        }
+        
+        function loadFeed() {
+            fetch(`/api/feed?user_id=${userId}`)
+                .then(r => r.json())
+                .then(data => {
+                    const feed = document.getElementById('feed');
+                    
+                    if (!data.deets || data.deets.length === 0) {
+                        feed.innerHTML = '<div class="empty"><h3>No deets yet</h3><p>Drop one above to get started!</p></div>';
+                        return;
+                    }
+                    
+                    feed.innerHTML = data.deets.map(item => {
+                        const d = item.deet;
+                        const scoreClass = d.current_credibility_score >= 7 ? 'score-high' : 
+                                          d.current_credibility_score >= 5 ? 'score-mid' : 'score-low';
+                        
+                        return `
+                            <div class="deet">
+                                <div class="deet-header">
+                                    <span>${d.origin_type === 'agent' ? '🤖 Agent' : '👤 User'}</span>
+                                    <span class="deet-state ${d.state}">${d.state}</span>
+                                </div>
+                                
+                                <div class="deet-claim">${d.claim_text}</div>
+                                
+                                <div class="deet-score">
+                                    <span class="score-number ${scoreClass}">${d.current_credibility_score.toFixed(1)}/10</span>
+                                    <span>${d.validation_count} ✅</span>
+                                    <span>${d.challenge_count} ❌</span>
+                                </div>
+                                
+                                <div class="deet-stats">
+                                    👀 ${d.seen_count} people saw • ➡️ ${d.pass_count} passed
+                                </div>
+                                
+                                <div class="deet-actions">
+                                    <button class="action-btn" onclick="validate('${d.id}')">✅ Validate</button>
+                                    <button class="action-btn" onclick="challenge('${d.id}')">❌ Challenge</button>
+                                    <button class="action-btn" onclick="showPassModal('${d.id}')">➡️ Pass</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                });
+        }
+        
+        function validate(deetId) {
+            // Accept deet (validate + auto-follow topic)
+            fetch(`/api/deet/${deetId}/accept`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId })
+            }).then(r => r.json()).then(result => {
+                if (result.success) {
+                    alert(`✅ Accepted! Now following: ${result.followed_topic}`);
+                    loadFeed();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            }).catch(() => {
+                // Fallback to old validate endpoint
+                fetch(`/api/deet/${deetId}/validate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                }).then(r => r.json()).then(() => loadFeed());
+            });
+        }
+        
+        function challenge(deetId) {
+            const note = prompt('Why challenge this? (optional)');
+            fetch(`/api/deet/${deetId}/challenge`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, note: note || '' })
+            }).then(r => r.json()).then(() => loadFeed());
+        }
+        
+        function showSeedModal() {
+            document.getElementById('seedModal').classList.add('active');
+        }
+        
+        function closeSeedModal() {
+            document.getElementById('seedModal').classList.remove('active');
+        }
+        
+        function seedDeet() {
+            const topic = document.getElementById('seedTopic').value;
+            if (!topic) {
+                alert('Pick a topic');
+                return;
+            }
+            
+            fetch(`/api/deet/seed/${encodeURIComponent(topic)}`, {
+                method: 'POST'
+            }).then(r => r.json()).then(result => {
+                if (result.success) {
+                    closeSeedModal();
+                    loadFeed();
+                } else {
+                    alert('Error: ' + (result.error || 'Failed to seed'));
+                }
+            });
+        }
+        
+        function showPassModal(deetId) {
+            currentPassDeetId = deetId;
+            document.getElementById('passOptions').innerHTML = `
+                <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+                    <input type="checkbox" name="pass" value="friend" checked>
+                    <span>Send to a friend (Jim, Alex, etc.)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" name="pass" value="public">
+                    <span>Post to public stream</span>
+                </label>
+            `;
+            document.getElementById('passModal').classList.add('active');
+        }
+        
+        function closePassModal() {
+            document.getElementById('passModal').classList.remove('active');
+        }
+        
+        function submitPass() {
+            const recipients = Array.from(document.querySelectorAll('input[name="pass"]:checked'))
+                .map(el => el.value);
+            
+            if (recipients.length === 0) {
+                alert('Pick where to send');
+                return;
+            }
+            
+            fetch(`/api/deet/${currentPassDeetId}/pass`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, recipients })
+            }).then(r => r.json()).then(() => {
+                closePassModal();
+                loadFeed();
+            });
+        }
+    </script>
+</body>
+</html>

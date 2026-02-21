@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Deets Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            color: #1a1a1a;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #7e22ce 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(126, 34, 206, 0.2);
+        }
+        
+        header h1 {
+            font-size: 36px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        header p {
+            font-size: 15px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+            border-left: 4px solid #7e22ce;
+            padding-left: 16px;
+            font-weight: 700;
+        }
+        
+        .preferences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .preference-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            background: #fafafa;
+        }
+        
+        .preference-card h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #667eea;
+        }
+        
+        .pref-control {
+            margin-bottom: 12px;
+        }
+        
+        .pref-control label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .deets-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .deet-card {
+            border-left: 5px solid #7e22ce;
+            padding: 24px;
+            background: linear-gradient(135deg, #fafbff 0%, #f0f4ff 100%);
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(126, 34, 206, 0.08);
+        }
+        
+        .deet-card:hover {
+            box-shadow: 0 8px 20px rgba(126, 34, 206, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .briefing-card {
+            display: block;
+        }
+        
+        .briefing-header {
+            margin-bottom: 16px;
+        }
+        
+        .briefing-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .stat-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-line {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: #666;
+            align-items: center;
+        }
+        
+        .dig-deeper-btn {
+            background: white;
+            border: 2px solid #7e22ce;
+            color: #7e22ce;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 12px;
+            width: 100%;
+        }
+        
+        .dig-deeper-btn:hover {
+            background: #7e22ce;
+            color: white;
+        }
+        
+        .dig-deeper-content {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #7e22ce;
+        }
+        
+        .source-preview {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .deet-content {
+            flex: 1;
+        }
+        
+        .deet-headline {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .deet-summary {
+            font-size: 15px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .deet-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #777;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .credibility-badge {
+            background: linear-gradient(135deg, #7e22ce, #a855f7);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .credibility-high {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+        
+        .credibility-medium {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        }
+        
+        .credibility-low {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+        }
+        
+        .smell-test {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+            color: #92400e;
+            margin-top: 12px;
+            font-weight: 500;
+        }
+        
+        .smell-test.clear {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border-color: #86efac;
+            color: #166534;
+        }
+        
+        .debunk-badge {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .debunk-badge.unverified {
+            background: linear-gradient(135deg, #9ca3af, #d1d5db);
+        }
+        
+        .debunk-badge.verified {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+        
+        .deet-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 20px;
+            align-items: center;
+        }
+        
+        .rating-stars {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .star {
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: all 0.2s;
+        }
+        
+        .star:hover,
+        .star.active {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        
+        .btn-small {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: all 0.3s;
+            padding: 8px;
+        }
+        
+        .btn-small:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        
+        .btn-trigger {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 16px;
+        }
+        
+        .btn-trigger:hover {
+            background: #764ba2;
+        }
+        
+        .topic-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .topic-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .topic-btn:hover,
+        .topic-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>{{ user.name }}'s Deets</h1>
+        <p>{{ user.phone }}</p>
+    </header>
+    
+    <div class="container">
+        <!-- Preferences Section -->
+        <div class="section">
+            <h2>Your Preferences</h2>
+            <div class="preferences-grid">
+                {% for pref in preferences %}
+                <div class="preference-card">
+                    <h3>{{ pref.topic }}</h3>
+                    <div class="pref-control">
+                        <label>Research Depth</label>
+                        <input type="range" min="0" max="100" value="{{ pref.temperature }}" 
+                            class="temp-slider" data-pref-id="{{ pref.id }}">
+                        <div style="font-size: 12px; color: #999; margin-top: 4px;" class="temp-label">Moderate</div>
+                    </div>
+                    <div class="pref-control">
+                        <label for="freq_{{ pref.id }}">Frequency</label>
+                        <select id="freq_{{ pref.id }}" data-pref-id="{{ pref.id }}" class="freq-select">
+                            <option value="daily" {% if pref.frequency == 'daily' %}selected{% endif %}>Daily</option>
+                            <option value="real-time" {% if pref.frequency == 'real-time' %}selected{% endif %}>Real-time</option>
+                            <option value="weekly" {% if pref.frequency == 'weekly' %}selected{% endif %}>Weekly</option>
+                        </select>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Deets Feed Section -->
+        <div class="section">
+            <h2>Your Deets Feed</h2>
+            
+            <div style="margin-bottom: 20px;">
+                <p style="font-size: 14px; color: #666; margin-bottom: 12px;">Test a topic now:</p>
+                <div class="topic-buttons">
+                    {% for topic in topics %}
+                    <button class="topic-btn btn-trigger" onclick="triggerDeet('{{ topic }}')">
+                        📡 {{ topic }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            {% if deets %}
+            <div class="deets-list">
+                {% for deet in deets %}
+                <div class="deet-card briefing-card" id="deet-{{ deet.id }}">
+                    <div class="deet-content">
+                        <div class="briefing-header">
+                            <div>
+                                <div class="deet-headline">
+                                    {{ deet.headline }}
+                                    {% if deet.debunk_status == 'debunked' %}
+                                    <span class="debunk-badge">🚫 DEBUNKED</span>
+                                    {% elif deet.debunk_status == 'partially verified' %}
+                                    <span class="debunk-badge unverified">⚠️ PARTIAL</span>
+                                    {% elif deet.debunk_status == 'confirmed' %}
+                                    <span class="debunk-badge verified">✅ CONFIRMED</span>
+                                    {% endif %}
+                                </div>
+                                <div class="deet-summary">{{ deet.summary }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="briefing-stats">
+                            <div class="stat-group">
+                                <span class="credibility-badge {% if deet.credibility_score >= 7 %}credibility-high{% elif deet.credibility_score >= 5 %}credibility-medium{% else %}credibility-low{% endif %}">
+                                    📊 Credibility: {{ deet.credibility_score }}/10
+                                </span>
+                            </div>
+                            <div class="stat-line">
+                                <span>🔗 {{ deet.cross_references }} sources agree</span>
+                                <span>•</span>
+                                <span>👥 {{ deet.community_upvotes }} verified</span>
+                            </div>
+                            <div class="stat-line">
+                                <span>#{{ deet.topic }}</span>
+                                <span>•</span>
+                                <span>📅 {{ deet.created_at[:10] }}</span>
+                            </div>
+                        </div>
+                        
+                        {% if deet.smell_test_flags %}
+                        <div class="smell-test {% if deet.debunk_status == 'confirmed' %}clear{% endif %}">
+                            <strong>🧪 Fact Check:</strong> {{ deet.smell_test_flags }}
+                        </div>
+                        {% endif %}
+                        
+                        <button class="dig-deeper-btn" onclick="toggleDeeper({{ deet.id }})">
+                            📚 See Sources & Details
+                        </button>
+                        
+                        <div id="deeper-{{ deet.id }}" class="dig-deeper-content" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 2px solid #f0f0f0;">
+                            <div class="source-preview">
+                                <strong>🔍 Top Sources:</strong>
+                                <div style="margin-top: 8px; font-size: 13px; color: #666;">
+                                    <p>Full source breakdown available in app (coming Phase 2)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="deet-actions">
+                        <div class="rating-stars">
+                            <span class="star" onclick="rateDeet({{ deet.id }}, 1)" title="Poor">⭐</span>
+                            <span class="star" onclick="rateDeet({{ deet.id }}, 2)" title="Fair">⭐</span>
+                            <span class="star" onclick="rateDeet({{ deet.id }}, 3)" title="Good">⭐</span>
+                            <span class="star" onclick="rateDeet({{ deet.id }}, 4)" title="Very Good">⭐</span>
+                            <span class="star" onclick="rateDeet({{ deet.id }}, 5)" title="Excellent">⭐</span>
+                        </div>
+                        <button class="btn-small" title="Share" onclick="shareDeet({{ deet.id }})">📤</button>
+                        <button class="btn-small" title="Send SMS" onclick="sendSMS({{ deet.id }})">💬</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <p>No deets yet. Click a topic above to generate your first deet!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script>
+        const userId = {{ user.id }};
+        
+        // Temperature slider sync
+        document.querySelectorAll('.temp-slider').forEach(slider => {
+            slider.addEventListener('change', (e) => {
+                const prefId = e.target.dataset.prefId;
+                const val = parseInt(e.target.value);
+                const label = e.target.parentElement.querySelector('.temp-label');
+                
+                if (val < 25) label.textContent = 'Headlines Only';
+                else if (val < 75) label.textContent = 'Moderate';
+                else label.textContent = 'Deep Research';
+            });
+        });
+        
+        // Frequency change sync
+        document.querySelectorAll('.freq-select').forEach(select => {
+            select.addEventListener('change', (e) => {
+                const prefId = e.target.dataset.prefId;
+                // In production, sync to backend
+                console.log('Frequency changed for pref:', prefId, e.target.value);
+            });
+        });
+        
+        async function triggerDeet(topic) {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = '⏳ Searching...';
+            
+            try {
+                const response = await fetch(`/api/trigger-deet/${userId}/${encodeURIComponent(topic)}`);
+                const result = await response.json();
+                if (result.success) {
+                    const score = Math.round(result.deet.credibility_score * 10) / 10;
+                    button.textContent = `✅ ${score}/10`;
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    alert('Error: ' + result.error);
+                    button.disabled = false;
+                    button.textContent = '📡 ' + topic;
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+                button.disabled = false;
+                button.textContent = '📡 ' + topic;
+            }
+        }
+        
+        function rateDeet(deetId, rating) {
+            const deetCard = document.getElementById(`deet-${deetId}`);
+            const stars = deetCard.querySelectorAll('.star');
+            
+            // Highlight stars up to rating
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+            
+            // Send to backend
+            fetch(`/api/rate-deet/${deetId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rating: rating })
+            }).then(() => {
+                console.log(`Rated deet ${deetId}: ${rating}/5 stars`);
+            });
+        }
+        
+        function shareDeet(deetId) {
+            const shareUrl = window.location.origin + `/share/${deetId}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out this deet',
+                    text: 'Get credibility-scored info',
+                    url: shareUrl
+                });
+            } else {
+                const temp = document.createElement('input');
+                temp.value = shareUrl;
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand('copy');
+                document.body.removeChild(temp);
+                alert('Link copied to clipboard!');
+            }
+        }
+        
+        function sendSMS(deetId) {
+            // Get deet headline from DOM
+            const deetCard = document.getElementById(`deet-${deetId}`);
+            const headline = deetCard.querySelector('.deet-headline').textContent.trim();
+            
+            fetch(`/api/send-sms/${deetId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ deetId: deetId })
+            }).then(res => res.json()).then(result => {
+                if (result.success) {
+                    alert('✅ SMS sent! Check your phone.');
+                } else {
+                    alert('Error sending SMS: ' + result.error);
+                }
+            });
+        }
+        
+        function toggleDeeper(deetId) {
+            const deeperContent = document.getElementById(`deeper-${deetId}`);
+            if (deeperContent.style.display === 'none') {
+                deeperContent.style.display = 'block';
+            } else {
+                deeperContent.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

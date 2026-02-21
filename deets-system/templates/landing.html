@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deets — Share What's True</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 60px 40px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e1e8ed;
+        }
+        
+        .logo {
+            margin-bottom: 20px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo svg {
+            width: 80px;
+            height: 80px;
+        }
+        
+        h1 {
+            font-size: 40px;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+        
+        .tagline {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+        
+        .how-it-works {
+            background: #f7f9fa;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            text-align: left;
+        }
+        
+        .step {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+        
+        .step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+        
+        .step-content h3 {
+            font-size: 15px;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        
+        .step-content p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .cta {
+            background: #1d9bf0;
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 12px rgba(29, 155, 240, 0.3);
+        }
+        
+        .cta:hover {
+            background: #1a91da;
+            transform: translateY(-2px);
+        }
+        
+        .features {
+            margin-bottom: 32px;
+            text-align: left;
+        }
+        
+        .feature {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .feature-icon {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Outer ripple -->
+                <circle cx="100" cy="100" r="85" fill="none" stroke="#1d9bf0" stroke-width="3" opacity="0.3"/>
+                <!-- Middle ripple -->
+                <circle cx="100" cy="100" r="65" fill="none" stroke="#1d9bf0" stroke-width="3" opacity="0.5"/>
+                <!-- Drop shape (teardrop) -->
+                <path d="M 100 40 C 85 55, 75 75, 75 90 C 75 115, 85.7 130, 100 130 C 114.3 130, 125 115, 125 90 C 125 75, 115 55, 100 40 Z" fill="#1d9bf0"/>
+                <!-- Center dot (the deet) -->
+                <circle cx="100" cy="85" r="12" fill="white"/>
+            </svg>
+        </div>
+        
+        <h1>Deets</h1>
+        <p class="tagline">
+            Find what's true. Share what matters. 
+            <br/><strong>One claim. Real credibility. Your network.</strong>
+        </p>
+        
+        <div class="how-it-works">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Drop a deet</h3>
+                    <p>Type a single claim (max 280 chars). Pick a topic.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>People validate or challenge</h3>
+                    <p>Others vote if it's true. Credibility score updates in real-time.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Pass it on</h3>
+                    <p>Send to friends. They see the trail (who validated it, who disagreed).</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Build your credibility</h3>
+                    <p>Your score rises if you validate things that turn out true.</p>
+                </div>
+            </div>
+        </div>
+        
+        <button class="cta" onclick="location.href='/setup'">Get Started (2 min)</button>
+        
+        <div class="features" style="margin-top: 40px; padding-top: 40px; border-top: 2px solid #e0e0e0;">
+            <div class="feature">
+                <span class="feature-icon">✨</span>
+                <span><strong>Simple:</strong> One claim per post. No walls of text.</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🔍</span>
+                <span><strong>Credible:</strong> See who validated each deet and their score.</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">📱</span>
+                <span><strong>Social:</strong> Pass to friends. Build your reputation.</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">⚡</span>
+                <span><strong>Fast:</strong> No algorithms. Activity-based sorting.</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
