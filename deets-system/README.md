@@ -1,205 +1,112 @@
-# The Deets System — Phase 1 POC
+# Deets — Viral Information Spreading System
 
-AI agent that finds what's true, scores who's credible, and sends you the deets before anyone else.
+## Phase 1: Core Loop (DROP → VALIDATE → CHALLENGE → PASS → TRAIL)
 
-## Architecture
+A deet moves through people, gaining or losing credibility at every touch. The **PASS is the product**. The **TRAIL is the proof**.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Web UI (Flask)                            │
-│  Landing → Setup → Dashboard → Share Links                  │
-└────────────────────────┬────────────────────────────────────┘
-                         │
-┌────────────────────────▼────────────────────────────────────┐
-│                   Topic Agent (Claude)                       │
-│  Research → Score Sources → Smell Test → Store Result       │
-└────────────────────────┬────────────────────────────────────┘
-                         │
-┌────────────────────────▼────────────────────────────────────┐
-│                    SQLite Database                           │
-│  Users | Preferences | Deets | Source History | Debunks    │
-└────────────────────────┬────────────────────────────────────┘
-                         │
-┌────────────────────────▼────────────────────────────────────┐
-│                   SMS Delivery (Twilio)                      │
-│  Send scored briefings to user phones                        │
-└─────────────────────────────────────────────────────────────┘
-```
+### What Works
 
-## Features
+✅ **DROP** — User creates a claim and sends to recipients  
+✅ **VALIDATE** — Receiver validates (+0.3 score, weighted by credibility)  
+✅ **CHALLENGE** — Receiver challenges (-0.3 score, with optional note)  
+✅ **PASS** — Forward deet to new recipients (+0.1 soft validation)  
+✅ **TRAIL** — Immutable history of all events (who touched what, when, why)
 
-### Core Agent Capabilities
-- **Topic research** via Claude Haiku (cost-optimized)
-- **Credibility scoring** (source track record + community validation)
-- **Cross-reference detection** (how many sources confirm)
-- **Smell test logic** (logical inconsistencies, debunk history, sensationalism)
-- **Debunk checking** (against known false claims)
+### Deploy to Internet (Render)
 
-### UI/UX
-- **Landing page** — Hook (no typing)
-- **Setup flow** — Phone, name, 1-5 topics, research depth (temperature dial)
-- **Dashboard** — View all deets, adjust preferences, test topics on demand
-- **Share links** — Teaser view (headline + credibility), full view requires app install
+**1-Click Deploy (Coming Soon):**
 
-### Database
-- Users + phone numbers
-- Topic preferences (temperature, frequency, filters)
-- Deets history (headline, summary, sources, credibility, community votes, smell test flags)
-- Source credibility history (tracks accuracy over time)
-- Known debunked claims registry
+For now, manual deploy:
 
-## Quick Start (Local)
+1. Go to [render.com](https://render.com) and sign up (free)
+2. Click **"New +"** → **"Web Service"**
+3. Connect your GitHub account, select `YOUEARNEDIT53/Deets`
+4. Fill in:
+   - **Name:** `deets`
+   - **Build command:** `pip install -r requirements.txt`
+   - **Start command:** `python app.py`
+5. Add environment variable:
+   - **Key:** `ANTHROPIC_API_KEY`
+   - **Value:** (your Anthropic API key)
+6. Click **"Create Web Service"**
+7. Wait 2-3 minutes for deployment
 
-### 1. Clone & Setup
+**Your live URL:** `https://deets-xxxx.onrender.com`
+
+**Password:** `deets2026`
+
+### Test Locally
+
 ```bash
-cd ~/.openclaw/workspace/deets-system
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-### 2. Configure
-```bash
-cp .env.example .env
-# Edit .env, add your ANTHROPIC_API_KEY
-```
-
-### 3. Run Locally
-```bash
+cd deets-system
 python app.py
 # Visit http://localhost:5000
+# Password: deets2026
 ```
 
-## Deployment to Render
+### Architecture
 
-### 1. Push to GitHub
-```bash
-cd ~/.openclaw/workspace/deets-system
-git init
-git add .
-git commit -m "Initial commit: Deets POC"
-git remote add origin https://github.com/YOUR_USERNAME/deets-system.git
-git push -u origin main
-```
+**Backend:**
+- Flask (Python)
+- SQLite database
+- Anthropic Claude (for agent seeding, Phase 2)
 
-### 2. Create Render Service
-- Go to https://render.com
-- New → Web Service
-- Connect GitHub repo `deets-system`
-- Set runtime: Python 3.11
-- Build command: `pip install -r requirements.txt`
-- Start command: `gunicorn app:app`
-- Add environment variable: `ANTHROPIC_API_KEY` = your key
-- Deploy
+**Database:**
+- `users` — credibility scores, interaction counts
+- `deets` — claims, current score, state
+- `trail_events` — immutable log (drop/view/validate/challenge/pass)
+- `topics` — categories users follow
 
-### 3. Configure Twilio (Optional, for SMS)
-- Get Twilio account at https://twilio.com
-- Add `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER` to Render env vars
-- Update `deliver_deet_sms()` in `app.py` to actually call Twilio
+**API Endpoints:**
+- `POST /api/deet/drop` — Create deet, send to recipients
+- `POST /api/deet/<id>/validate` — Validate claim
+- `POST /api/deet/<id>/challenge` — Challenge claim with note
+- `POST /api/deet/<id>/pass` — Forward to new recipients
+- `GET /api/deet/<id>/trail` — Full event history
 
-## Phase 1 Focus
-
-✓ Single user (you + Jim) testing daily
-✓ Full smell-test logic operational
-✓ Topic agent working end-to-end
-✓ Manual trigger for testing
-✓ Web dashboard + SMS delivery
-
-## Next Steps (Phase 2)
-
-- [ ] CRON automation (scheduled daily/weekly agent runs)
-- [ ] Twilio SMS integration (real delivery)
-- [ ] Onboarding UX polish
-- [ ] Share mechanic (link teaser + viral loop)
-- [ ] Beta user group (50 users)
-
-## Topics (Seed for Testing)
-
-1. **Celebrity/Entertainment** — Oscar predictions, Marvel releases
-2. **Sports** — Super Bowl drama, tournament updates
-3. **Tech Breakthroughs** — AI releases, new products
-4. **True Crime** — Cold cases, legal proceedings
-5. **Crypto/Finance** — Market moves, SEC news
-
-## Cost Estimates
-
-**Phase 1 (2-3 weeks, 2 users):**
-- Render free tier: $0
-- Claude Haiku: ~$2-5/mo
-- Twilio (optional): ~$5/mo
-- Total: ~$10
-
-**Phase 2 (3 weeks, 50 users):**
-- Render starter: ~$7/mo
-- Claude Haiku: ~$15-20/mo
-- Twilio: ~$5-20/mo
-- Total: ~$50
-
-## Key Decisions Made
-
-- **Claude Haiku** for agent (10-15x cheaper than Sonnet)
-- **SQLite** for Phase 1 (scales to hundreds of users, free)
-- **Flask** (minimal, flexible, easy to iterate)
-- **Render** (free tier to start, cheap scaling)
-- **Full smell-test logic from Day 1** (builds credibility moat early)
-
-## Files Structure
+### Score Calculation
 
 ```
-deets-system/
-├── app.py                 # Main Flask app + Claude agent
-├── requirements.txt       # Python dependencies
-├── Procfile              # Render deployment config
-├── render.yaml           # Alternative Render config
-├── .env.example          # Environment variables template
-├── deets.db             # SQLite database (auto-created)
-├── templates/
-│   ├── landing.html     # Home page
-│   ├── setup.html       # User onboarding
-│   ├── dashboard.html   # Main interface
-│   └── share.html       # Share teaser view
-└── README.md            # This file
+VALIDATE: +0.3 * (validator_credibility / 5.0)
+CHALLENGE: -0.3 * (challenger_credibility / 5.0)
+PASS: +0.1 * (passer_credibility / 5.0)
 ```
 
-## Running Agent Tests
+Score range: 0.0 - 10.0 (clamped)
 
-From dashboard, click any topic button to manually trigger research:
+### State Transitions
 
-```
-📡 Celebrity/Entertainment
-📡 Sports
-📡 Tech Breakthroughs
-📡 True Crime
-📡 Crypto/Finance
-```
+- **fresh:** < 10 interactions
+- **spreading:** 10-99 interactions
+- **hot:** 100+ interactions AND score > 7.0
+- **confirmed:** score > 8.5 AND 85%+ validation rate
+- **disputed:** balanced validate/challenge ratio
+- **debunked:** score < 3.0 AND 20+ challenges
+- **faded:** no interaction in 48 hours
 
-Watch the agent:
-1. Research the topic
-2. Score sources
-3. Run smell test
-4. Store result
-5. Display credibility score (0-10)
+### Next (Phase 2)
 
-## Feedback Loop
+- [ ] Feed UI (show deets, action buttons)
+- [ ] Trail visualization (chain display)
+- [ ] Teaser page (unauthenticated view + install CTA)
+- [ ] Agent seeding (Claude generates deets autonomously)
+- [ ] Push notifications
+- [ ] User credibility update algorithm
+- [ ] Leaderboard
 
-Users can thumbs up/down each deet. This trains:
-- Source credibility scores
-- Community validation metrics
-- Smell test accuracy
+### Files
 
-## Next: Automation
+- `app.py` — Flask backend (450 lines, core logic)
+- `templates/` — HTML templates (landing, setup, login, dashboard)
+- `requirements.txt` — Python dependencies
+- `Procfile` — Heroku/Render deployment config
+- `render.yaml` — Render-specific config
 
-Once POC is solid, add CRON jobs so the agent:
-1. Wakes at user's preferred frequency (daily, real-time, weekly)
-2. Researches trending topics in their preferences
-3. Scores credibility automatically
-4. Sends SMS notification
-5. User taps link → shares with friends → installs app
+### Team
 
-That's the viral loop.
+- **Product:** Chris (youearnedit53)
+- **Build:** Genny (AI agent)
 
 ---
 
-**Built by:** Chris & Jim  
-**Date:** February 2026  
-**Status:** Phase 1 POC
+**Status:** Phase 1 complete. All core endpoints tested and working. Ready for UI testing on cellular.
