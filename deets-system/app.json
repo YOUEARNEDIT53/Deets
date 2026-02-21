@@ -1,0 +1,17 @@
+{
+  "name": "Deets",
+  "description": "Viral information spreading system",
+  "repository": "https://github.com/YOUEARNEDIT53/Deets",
+  "keywords": ["python", "flask"],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "env": {
+    "ANTHROPIC_API_KEY": {
+      "description": "Your Anthropic API key",
+      "required": true
+    }
+  }
+}
