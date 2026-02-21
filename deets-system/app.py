@@ -4,15 +4,17 @@ Drop → Validate/Challenge → Pass → Trail
 Author: Genny | Date: February 21, 2026
 """
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect
 from datetime import datetime
 import sqlite3
 import json
 import uuid
 import logging
+import os
 from anthropic import Anthropic
 
 app = Flask(__name__)
+app.secret_key = os.getenv('SECRET_KEY', 'deets-phase1-test-key-change-in-production')
 DB_PATH = "deets_v2.db"
 TOPICS = ["Celebrity/Entertainment", "Sports", "Tech Breakthroughs", "True Crime", "Crypto/Finance"]
 
@@ -90,6 +92,33 @@ def get_db():
 
 def generate_id():
     return str(uuid.uuid4())
+
+# ============ AUTH ============
+
+@app.before_request
+def require_login():
+    """Require password for all routes except /login and /health"""
+    if request.path in ['/login', '/health']:
+        return
+    if 'authenticated' not in session:
+        return redirect('/login')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        password = request.form.get('password', '')
+        # Simple password check (change to env var in production)
+        if password == 'deets2026':
+            session['authenticated'] = True
+            return redirect('/')
+        else:
+            return render_template('login.html', error='Wrong password'), 401
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('authenticated', None)
+    return redirect('/login')
 
 # ============ ROUTES ============
 
