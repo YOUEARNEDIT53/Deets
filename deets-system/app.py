@@ -11,14 +11,18 @@ import json
 import uuid
 import logging
 import os
-from anthropic import Anthropic
+
+# Optional: Anthropic (not needed for Phase 1)
+try:
+    from anthropic import Anthropic
+    client = Anthropic()
+except:
+    client = None
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'deets-phase1-test-key-change-in-production')
 DB_PATH = "deets_v2.db"
 TOPICS = ["Celebrity/Entertainment", "Sports", "Tech Breakthroughs", "True Crime", "Crypto/Finance"]
-
-client = Anthropic()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
