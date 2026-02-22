@@ -99,16 +99,13 @@ def generate_id():
 def require_login():
     """Require password except for auth and API endpoints"""
     public_routes = ['/login', '/health', '/setup']
-    api_routes = ['/api/deet/drop', '/api/deet/create', '/api/deet/validate', 
-                  '/api/deet/challenge', '/api/deet/pass', '/api/deet/trail', 
-                  '/api/feed', '/api/deet/seed']
     
     # Allow public routes
     if request.path in public_routes:
         return
     
-    # Allow API routes (they're already protected by being internal)
-    if any(request.path.startswith(route) for route in api_routes):
+    # Allow all /api/ routes (internal only)
+    if request.path.startswith('/api/'):
         return
     
     # Everything else requires login
