@@ -6,3 +6,4 @@ requests==2.31.0
 beautifulsoup4==4.12.2
 feedparser==6.0.10
 twilio>=8.0.0
+gunicorn==21.2.0
