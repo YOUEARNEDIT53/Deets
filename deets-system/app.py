@@ -97,9 +97,21 @@ def generate_id():
 
 @app.before_request
 def require_login():
-    """Require password for all routes except /login and /health"""
-    if request.path in ['/login', '/health']:
+    """Require password except for auth and API endpoints"""
+    public_routes = ['/login', '/health', '/setup']
+    api_routes = ['/api/deet/drop', '/api/deet/create', '/api/deet/validate', 
+                  '/api/deet/challenge', '/api/deet/pass', '/api/deet/trail', 
+                  '/api/feed', '/api/deet/seed']
+    
+    # Allow public routes
+    if request.path in public_routes:
         return
+    
+    # Allow API routes (they're already protected by being internal)
+    if any(request.path.startswith(route) for route in api_routes):
+        return
+    
+    # Everything else requires login
     if 'authenticated' not in session:
         return redirect('/login')
 
@@ -169,6 +181,35 @@ def dashboard(user_id):
     return render_template('dashboard_v2.html', user=user, topics=TOPICS)
 
 # ============ DEET ENDPOINTS ============
+
+@app.route('/api/deet/create', methods=['POST'])
+def create_deet():
+    """Alias for drop_deet (for UI compatibility)."""
+    data = request.json
+    
+    # Map old UI parameters to new DROP format
+    if 'claim' not in data or 'topic_id' not in data:
+        return jsonify({'error': 'Missing claim or topic_id'}), 400
+    
+    # Convert topic_id to topic name if needed
+    conn = get_db()
+    c = conn.cursor()
+    c.execute('SELECT name FROM topics WHERE id = ?', (data.get('topic_id'),))
+    topic_row = c.fetchone()
+    topic_name = topic_row['name'] if topic_row else data.get('topic_id')
+    conn.close()
+    
+    # Rewrite request to use DROP format
+    drop_data = {
+        'user_id': data.get('user_id'),
+        'claim': data.get('claim'),
+        'topic': topic_name,
+        'anonymous': data.get('anonymous', False),
+        'recipients': data.get('recipients', [])
+    }
+    request.json = drop_data
+    
+    return drop_deet()
 
 @app.route('/api/deet/drop', methods=['POST'])
 def drop_deet():
@@ -453,6 +494,11 @@ def pass_deet(deet_id):
         logger.error(f"Pass error: {e}")
         return jsonify({'error': str(e)}), 400
 
+@app.route('/api/deet/seed/<topic>', methods=['POST'])
+def seed_deet_stub(topic):
+    """Agent seeding (disabled in Phase 1, coming in Phase 2)."""
+    return jsonify({'error': 'Agent seeding disabled for Phase 1. Use /api/deet/drop instead.'}), 501
+
 @app.route('/api/deet/<deet_id>/trail', methods=['GET'])
 def get_trail(deet_id):
     """Get full trail for a deet."""
@@ -508,6 +554,33 @@ def get_trail(deet_id):
     except Exception as e:
         conn.close()
         logger.error(f"Trail error: {e}")
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/feed')
+def get_feed():
+    """Get deets for a user's feed."""
+    user_id = request.args.get('user_id')
+    
+    conn = get_db()
+    c = conn.cursor()
+    
+    try:
+        # Get all deets (activity-sorted)
+        c.execute('''
+            SELECT * FROM deets
+            ORDER BY last_interaction_at DESC, pass_count DESC
+            LIMIT 50
+        ''')
+        deets = c.fetchall()
+        conn.close()
+        
+        return jsonify({
+            'user_id': user_id,
+            'deets': [dict(d) for d in deets] if deets else []
+        }), 200
+    except Exception as e:
+        conn.close()
+        logger.error(f"Feed error: {e}")
         return jsonify({'error': str(e)}), 400
 
 @app.route('/deet/<deet_id>')
